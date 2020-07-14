@@ -4,6 +4,8 @@ This library unifies the distribution correction estimation algorithms for off-p
 * [DualDICE: Behavior-Agnostic Estimation of Discounted Stationary Distribution Corrections](https://arxiv.org/abs/1906.04733)
 * [GenDICE: Generalized Offline Estimation of Stationary Values](https://arxiv.org/abs/2002.09072)
 * [Reinforcement Learning via Fenchel-Rockafellar Duality](https://arxiv.org/abs/2001.01866)
+* [Off-Policy Evaluation via the Regularized Lagrangian](https://arxiv.org/abs/2007.03438)
+
 Please cite these work accordingly upon using this library.
 
 ## Summary
