@@ -40,6 +40,9 @@ import dice_rl.utils.common as common_utils
 from dice_rl.data.dataset import Dataset, EnvStep, StepType
 from dice_rl.data.tf_offpolicy_dataset import TFOffpolicyDataset
 
+# BEGIN GOOGLE-INTERNAL
+import google3.learning.deepmind.xmanager2.client.google as xm
+# END GOOGLE-INTERNAL
 
 FLAGS = flags.FLAGS
 

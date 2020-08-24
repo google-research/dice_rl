@@ -30,29 +30,37 @@ from tf_agents.environments import tf_py_environment
 
 from dice_rl.environments.env_policies import get_target_policy
 import dice_rl.environments.gridworld.navigation as navigation
+import dice_rl.environments.gridworld.tree as tree
 import dice_rl.environments.gridworld.taxi as taxi
-from dice_rl.estimators.tabular_dual_dice import TabularDualDice
+from dice_rl.google.estimators.neural_qlearning import NeuralQLearning
+from dice_rl.estimators import estimator as estimator_lib
+from dice_rl.networks.value_network import ValueNetwork
 import dice_rl.utils.common as common_utils
 from dice_rl.data.dataset import Dataset, EnvStep, StepType
 from dice_rl.data.tf_offpolicy_dataset import TFOffpolicyDataset
-
-# BEGIN GOOGLE-INTERNAL
-import google3.learning.deepmind.xmanager2.client.google as xm
-# END GOOGLE-INTERNAL
+from dice_rl.data.perturbed_dataset import PerturbedDataset
 
 FLAGS = flags.FLAGS
 
-flags.DEFINE_string('env_name', 'taxi', 'Environment name.')
+flags.DEFINE_string('env_name', 'grid', 'Environment name.')
 flags.DEFINE_integer('seed', 0, 'Initial random seed.')
 flags.DEFINE_integer('num_trajectory', 100,
                      'Number of trajectories to collect.')
-flags.DEFINE_float('alpha', 1.0, 'How close to target policy.')
-flags.DEFINE_integer('max_trajectory_length', 500,
+flags.DEFINE_integer('max_trajectory_length', 100,
                      'Cutoff trajectory at this step.')
-flags.DEFINE_bool('tabular_obs', True, 'Whether to use tabular observations.')
-flags.DEFINE_string('load_dir', None, 'Directory to load dataset from.')
-flags.DEFINE_string('save_dir', None, 'Directory to save estimation results.')
-flags.DEFINE_float('gamma', 0.995, 'Discount factor.')
+flags.DEFINE_float('alpha', 0.0,
+                   'How close to target policy.')
+flags.DEFINE_bool('tabular_obs', False,
+                  'Whether to use tabular observations.')
+flags.DEFINE_string('load_dir', '/cns/vz-d/home/brain-ofirnachum',
+                    'Directory to load dataset from.')
+flags.DEFINE_float('gamma', 0.995,
+                   'Discount factor.')
+flags.DEFINE_float('learning_rate', 0.001, 'Learning rate.')
+flags.DEFINE_integer('nstep_returns', 1,
+                     'Use n-step returns with this many steps.')
+flags.DEFINE_integer('num_steps', 100000, 'Number of training steps.')
+flags.DEFINE_integer('batch_size', 128, 'Batch size.')
 
 
 def main(argv):
@@ -61,11 +69,14 @@ def main(argv):
   tabular_obs = FLAGS.tabular_obs
   num_trajectory = FLAGS.num_trajectory
   max_trajectory_length = FLAGS.max_trajectory_length
-  load_dir = FLAGS.load_dir
-  save_dir = FLAGS.save_dir
-  gamma = FLAGS.gamma
   alpha = FLAGS.alpha
+  load_dir = FLAGS.load_dir
+  gamma = FLAGS.gamma
   assert 0 <= gamma < 1.
+  learning_rate = FLAGS.learning_rate
+  nstep_returns = FLAGS.nstep_returns
+  num_steps = FLAGS.num_steps
+  batch_size = FLAGS.batch_size
 
   target_policy = get_target_policy(load_dir, env_name, tabular_obs)
 
@@ -80,24 +91,39 @@ def main(argv):
   directory = os.path.join(load_dir, hparam_str)
   print('Loading dataset.')
   dataset = Dataset.load(directory)
+  all_steps = dataset.get_all_steps()
+  max_reward = tf.reduce_max(all_steps.reward)
+  min_reward = tf.reduce_min(all_steps.reward)
   print('num loaded steps', dataset.num_steps)
   print('num loaded total steps', dataset.num_total_steps)
   print('num loaded episodes', dataset.num_episodes)
   print('num loaded total episodes', dataset.num_total_episodes)
+  print('min reward', min_reward, 'max reward', max_reward)
 
-  estimator = TabularDualDice(dataset_spec=dataset.spec, gamma=gamma)
-  estimate = estimator.solve(dataset, target_policy)
-  print('estimated per step avg', estimate)
+  estimate = estimator_lib.get_fullbatch_average(dataset, gamma=gamma)
+  print('data per step avg', estimate)
+  dataset = PerturbedDataset(dataset,
+                             num_perturbations=10,
+                             perturbation_scale=1.)
+  #estimate = estimator_lib.get_fullbatch_average(dataset, gamma=gamma)
+  #print('perturbed data per step avg', estimate)
+
+  value_network = ValueNetwork((dataset.spec.observation, dataset.spec.action),
+                               fc_layer_params=(64, 64),
+                               output_dim=10)
+  optimizer = tf.keras.optimizers.Adam(learning_rate)
+
+  estimator = NeuralQLearning(dataset.spec, value_network, optimizer, gamma,
+                              num_qvalues=10)
+  for step in range(num_steps):
+    batch = dataset.get_step(batch_size, num_steps=nstep_returns + 1)
+    loss, _ = estimator.train_step(batch, target_policy)
+    if step % 100 == 0 or step == num_steps - 1:
+      print('step', step, 'loss', loss)
+      estimate = estimator.estimate_average_reward(dataset, target_policy)
+      print('estimated per step avg', estimate)
 
   print('Done!')
-
-  if save_dir is not None:
-    if not tf.io.gfile.isdir(save_dir):
-      tf.io.gfile.makedirs(save_dir)
-    out_fname = os.path.join(save_dir, hparam_str + '.npy')
-    print('Saving results to', out_fname)
-    with tf.io.gfile.GFile(out_fname, 'w') as f:
-      np.save(f, estimate.numpy())
 
 
 if __name__ == '__main__':

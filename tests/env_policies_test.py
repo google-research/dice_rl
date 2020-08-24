@@ -36,6 +36,9 @@ class EnvPoliciesTest(tf.test.TestCase):
 
   def test_get_env_and_policy(self):
     load_dir = 'testdata/'
+    # BEGIN GOOGLE-INTERNAL
+    load_dir = 'google3/third_party/py/dice_rl/tests/testdata/'
+    # END GOOGLE-INTERNAL
     load_dir = os.path.join(flags.FLAGS.test_srcdir, load_dir)
     env_names = [
         'grid', 'tree', 'bandit', 'small_tree', 'reacher', 'Reacher-v2',
