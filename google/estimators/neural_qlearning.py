@@ -157,7 +157,7 @@ class NeuralQLearning(object):
 
   def train_loss(self, env_step, rewards, next_env_step, policy, gamma):
     values = self._get_value(env_step)
-    discounts = gamma * env_step.discount
+    discounts = gamma * next_env_step.discount
     target_values = self._get_target_value(next_env_step, policy)
     #target_values = tf.reduce_min(target_values, axis=-1, keepdims=True)
 

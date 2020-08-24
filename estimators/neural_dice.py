@@ -188,7 +188,7 @@ class NeuralDice(object):
 
     zeta_values = self._get_value(self._zeta_network, env_step)
 
-    discounts = self._gamma * env_step.discount
+    discounts = self._gamma * next_env_step.discount
     policy_ratio = 1.0
     if not self._solve_for_state_action_ratio:
       tfagents_step = dataset_lib.convert_to_tfagents_timestep(env_step)
@@ -361,7 +361,7 @@ class NeuralDice(object):
     next_nu_values = self._get_average_value(self._nu_network, next_env_step,
                                              target_policy)
     zeta_values = self._get_value(self._zeta_network, env_step)
-    discounts = self._gamma * env_step.discount
+    discounts = self._gamma * next_env_step.discount
     bellman_residuals = (
         common_lib.reverse_broadcast(discounts, nu_values) * next_nu_values -
         nu_values - self._norm_regularizer * self._lam)
