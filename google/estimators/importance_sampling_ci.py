@@ -227,9 +227,14 @@ class ImportanceSamplingCI(object):
 
     target_log_probabilities = target_policy.distribution(
         tfagents_env_step).action.log_prob(env_step.action)
+    if tf.rank(target_log_probabilities) > 1:
+      target_log_probabilities = tf.reduce_sum(target_log_probabilities, -1)
     if self._policy_network is not None:
       baseline_policy_log_probability = self._get_log_prob(
           self._policy_network, env_step)
+      if tf.rank(baseline_policy_log_probability) > 1:
+        baseline_policy_log_probability = tf.reduce_sum(
+            baseline_policy_log_probability, -1)
       policy_log_ratios = tf.reshape(
           tf.maximum(-1.0 / eps, target_log_probabilities -
                      baseline_policy_log_probability),
@@ -307,10 +312,10 @@ class ImportanceSamplingCI(object):
     """Estimate the confidence interval of reward."""
     is_weighted_reward_samples = self.get_is_weighted_reward_samples(
         dataset, target_policy, episode_limit)
-    all_steps = dataset.get_all_steps()
-    _, valid_steps = dataset.get_all_episodes(limit=episode_limit)
+    episodes, valid_steps = dataset.get_all_episodes(limit=episode_limit)
     num_episodes = tf.shape(valid_steps)[0]
-    max_abs_reward = tf.reduce_max(tf.abs(self._reward_fn(all_steps)))
+    max_abs_reward = tf.reduce_max(
+        tf.where(valid_steps, tf.abs(self._reward_fn(episodes)), 0.))
 
     # mean estimate
     center = self.estimate_average_reward(dataset, target_policy)
