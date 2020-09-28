@@ -180,7 +180,12 @@ class ImportanceSamplingCI(object):
 
 
   def _get_log_prob(self, policy_network, env_step):
-    return policy_network(env_step.observation)[0].log_prob(env_step.action)
+    # TODO(ofirnachum): env_step.action is shaped [B] but network's action_spec
+    # is BoundedTensorSpec(shape=[1], ...); which leads network to use a
+    # MVNDiag distribution here with event_shape=[1].  MVNDiag expects inputs of
+    # shape [B, 1].
+    return policy_network(env_step.observation)[0].log_prob(
+        env_step.action[..., tf.newaxis])
 
   def clip_is_factor(self, is_factor):
     return tf.minimum(self._clipping, tf.maximum(-self._clipping, is_factor))
