@@ -170,5 +170,8 @@ def get_fullbatch_average(dataset: OffpolicyDataset,
 
   rewards = common_lib.reverse_broadcast(rewards, weights)
   weights = common_lib.reverse_broadcast(weights, rewards)
-  return (tf.reduce_sum(rewards * weights, axis=0) /
-          tf.reduce_sum(weights, axis=0))
+  if tf.rank(weights) < 2:
+    return (tf.reduce_sum(rewards * weights, axis=0) /
+            tf.reduce_sum(weights, axis=0))
+  return (tf.linalg.matmul(weights, rewards) /
+          tf.reduce_sum(tf.math.reduce_mean(weights, axis=0)))

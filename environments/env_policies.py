@@ -26,7 +26,6 @@ from tf_agents.networks import q_network
 from tf_agents.networks import actor_distribution_network
 from tf_agents.policies import actor_policy
 from tf_agents.policies import greedy_policy
-from tf_agents.policies import gaussian_policy
 from tf_agents.policies import q_policy
 from tf_agents.policies import tf_policy
 from tf_agents.trajectories import policy_step
@@ -203,7 +202,8 @@ def get_env_and_policy(load_dir,
     sac_policy = get_sac_policy(tf_env)
     directory = os.path.join(load_dir, 'Reacher-v2', 'train', 'policy')
     policy = load_policy(sac_policy, env_name, directory)
-    policy = gaussian_policy.GaussianPolicy(policy, 0.4 - 0.3 * alpha)
+    policy = GaussianPolicy(
+        policy, 0.4 - 0.3 * alpha, emit_log_probability=True)
   elif env_name == 'HalfCheetah-v2':
     env = suites.load_mujoco(env_name)
     env.seed(env_seed)
@@ -211,7 +211,8 @@ def get_env_and_policy(load_dir,
     sac_policy = get_sac_policy(tf_env)
     directory = os.path.join(load_dir, env_name, 'train', 'policy')
     policy = load_policy(sac_policy, env_name, directory)
-    policy = gaussian_policy.GaussianPolicy(policy, 0.2 - 0.1 * alpha)
+    policy = GaussianPolicy(
+        policy, 0.2 - 0.1 * alpha, emit_log_probability=True)
   else:
     raise ValueError('Unrecognized environment %s.' % env_name)
 
