@@ -77,7 +77,7 @@ def build_experiment():
 
   num_trajectory = 200
   executable = xm.BuildTarget(
-      '//third_party/py/dice_rl/google/scripts:run_tabular_coin_dice',
+      '//third_party/py/dice_rl/scripts:run_tabular_coin_dice',
       build_flags=AVX2_BUILD_FLAGS if FLAGS.avx2 else AVX_BUILD_FLAGS,
       args=[
           ('env_name', FLAGS.env_name),

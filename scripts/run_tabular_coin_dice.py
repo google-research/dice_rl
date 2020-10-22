@@ -12,6 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Script for running CoinDICE with neural network function approximators.
+
+The default parameters here should reproduce the published frozenlake results.
+Make sure to generate the reacher dataset prior to running this script (see
+`scripts/create_dataset.py`). Furthermore, the user will need to feed in an
+appropriate `divergence_limit`, which should be set to a desired chi2 percentile
+divided by the size of the offline dataset (see paper for details). For example,
+if a 90% confidence interval is desired and the offline dataset is 1000
+trajectories of length 100, then the divergence_limit should be 2.7055 / 100000.
+
+For the other published results, the procedure should be the same. For best
+results on Taxi, the user may want to pass in solve_for_state_action_ratio=False
+to TabularCoinDice.
+"""
+
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -31,11 +46,14 @@ from tf_agents.environments import tf_py_environment
 from dice_rl.environments.env_policies import get_target_policy
 from dice_rl.estimators import estimator as estimator_lib
 from dice_rl.networks.value_network import ValueNetwork
-from dice_rl.google.estimators.tabular_coin_dice import TabularCoinDice
+from dice_rl.estimators.tabular_coin_dice import TabularCoinDice
 import dice_rl.utils.common as common_utils
 from dice_rl.data.dataset import Dataset, EnvStep, StepType
 from dice_rl.data.tf_offpolicy_dataset import TFOffpolicyDataset
+
+# BEGIN GOOGLE-INTERNAL
 import google3.learning.deepmind.xmanager2.client.google as xm  # pylint: disable=unused-import
+# END GOOGLE-INTERNAL
 
 FLAGS = flags.FLAGS
 
@@ -47,9 +65,9 @@ flags.DEFINE_integer('max_trajectory_length', 100,
                      'Cutoff trajectory at this step.')
 flags.DEFINE_float('alpha', 0.0, 'How close to target policy.')
 flags.DEFINE_float('divergence_limit', 1e-5, 'Divergence limit.')
-flags.DEFINE_float('algae_alpha', 0.1, 'Regularizer on Df(dpi|dD).')
+flags.DEFINE_float('algae_alpha', 0.01, 'Regularizer on Df(dpi|dD).')
 flags.DEFINE_bool('tabular_obs', True, 'Whether to use tabular observations.')
-flags.DEFINE_string('load_dir', '/cns/vz-d/home/brain-ofirnachum/',
+flags.DEFINE_string('load_dir', None,
                     'Directory to load dataset from.')
 flags.DEFINE_string('save_dir', None,
                     'Directory to save estimation results.')

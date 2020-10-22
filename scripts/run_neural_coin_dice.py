@@ -11,6 +11,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""Script for running CoinDICE with neural network function approximators.
+
+The default parameters here should reproduce the published reacher results. Make
+sure to generate the reacher dataset prior to running this script (see
+`scripts/create_dataset.py`). Furthermore, the user will need to feed in an
+appropriate `divergence_limit`, which should be set to a desired chi2 percentile
+divided by the size of the offline dataset (see paper for details). For example,
+if a 90% confidence interval is desired and the offline dataset is 25
+trajectories of length 100, then the divergence_limit should be 2.7055 / 2500.
+"""
 
 from __future__ import absolute_import
 from __future__ import division
@@ -30,14 +40,16 @@ from tf_agents.environments import gym_wrapper
 from tf_agents.environments import tf_py_environment
 
 from dice_rl.environments.env_policies import get_target_policy
-from dice_rl.google.estimators.neural_coin_dice import NeuralCoinDice
+from dice_rl.estimators.neural_coin_dice import NeuralCoinDice
 from dice_rl.estimators import estimator as estimator_lib
 from dice_rl.networks.value_network import ValueNetwork
 import dice_rl.utils.common as common_utils
 from dice_rl.data.dataset import Dataset, EnvStep, StepType
 from dice_rl.data.tf_offpolicy_dataset import TFOffpolicyDataset
 
+# BEGIN GOOGLE-INTERNAL
 import google3.learning.deepmind.xmanager2.client.google as xm
+# END GOOGLE-INTERNAL
 
 FLAGS = flags.FLAGS
 
@@ -51,7 +63,7 @@ flags.DEFINE_float('alpha', 0.0,
                    'How close to target policy.')
 flags.DEFINE_bool('tabular_obs', False,
                   'Whether to use tabular observations.')
-flags.DEFINE_string('load_dir', '/cns/vz-d/home/brain-ofirnachum',
+flags.DEFINE_string('load_dir', None,
                     'Directory to load dataset from.')
 flags.DEFINE_string('save_dir', None,
                     'Directory to save results to.')
