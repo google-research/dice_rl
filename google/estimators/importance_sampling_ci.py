@@ -335,12 +335,8 @@ class ImportanceSamplingCI(object):
     elif self._ci_method == 'BE':  # Empirical Bernstein
       constant_term = 7 * max_abs_reward * tf.math.log(
           2.0 / delta_tail_half) / (3 * (num_episodes_float - 1))
-      is_weighted_reward_samples_2d = tf.reshape(is_weighted_reward_samples,
-                                                 [-1, 1])
       variance_term = tf.reduce_sum(
-          tf.square(
-              tf.tile(is_weighted_reward_samples_2d, [1, num_episodes]) -
-              is_weighted_reward_samples_2d))
+          tf.square(is_weighted_reward_samples - center))
 
       variance_term *= tf.math.log(2.0 / delta_tail_half) / (
           num_episodes_float - 1)
@@ -354,21 +350,17 @@ class ImportanceSamplingCI(object):
         c_vec = c_const * tf.ones_like(is_weighted_reward_samples)
         c_is_weighted_reward_samples = tf.minimum(is_weighted_reward_samples,
                                                   c_vec) / c_vec
-        c_is_weighted_reward_samples_2d = tf.reshape(
-            c_is_weighted_reward_samples, [-1, 1])
         constant_term = 7 * num_episodes_float * tf.math.log(
             2.0 / delta_tail_half) / (3 * (num_episodes_float - 1))
 
+        center = tf.reduce_sum(c_is_weighted_reward_samples) / tf.reduce_sum(
+            1.0 / c_vec)
         variance_term = tf.reduce_sum(
-            tf.square(
-                tf.tile(c_is_weighted_reward_samples_2d, [1, num_episodes]) -
-                c_is_weighted_reward_samples_2d))
+            tf.square(c_is_weighted_reward_samples - center))
         variance_term *= tf.math.log(2.0 / delta_tail_half) / (
             num_episodes_float - 1)
 
         width = (constant_term + tf.math.sqrt(variance_term)) / tf.reduce_sum(
-            1.0 / c_vec)
-        center = tf.reduce_sum(c_is_weighted_reward_samples) / tf.reduce_sum(
             1.0 / c_vec)
         return center, width
 
