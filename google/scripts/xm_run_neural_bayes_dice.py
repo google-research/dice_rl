@@ -51,7 +51,7 @@ def build_experiment():
       FLAGS.save_dir.format(CELL=FLAGS.cell),
       '{EXP}_gamma{GAMMA}'.format(EXP=FLAGS.exp_name, GAMMA=FLAGS.gamma))
   executable = xm.BuildTarget(
-      '//third_party/py/dice_rl/google/scripts:run_neural_bayes_dice',
+      '//third_party/py/dice_rl/scripts:run_neural_bayes_dice',
       build_flags=['-c', 'opt', '--copt=-mavx'],
       args=[
           ('env_name', FLAGS.env_name),

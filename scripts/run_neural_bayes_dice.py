@@ -11,11 +11,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Runs BayesDICE with neural nets.
+"""Script for running BayesDICE with function approximation.
 
-For example,
-blaze run -c opt --copt=-mavx2 google/scripts:run_neural_bayes_dice --
---save_dir=$HOME/tmp --load_dir=/cns/is-d/home/sherryy/prodice/data
+Make sure to generate the datasets prior to running this script (see
+`scripts/create_dataset.py`). The default parameters here should reproduce
+the published reacher results.
 """
 
 from __future__ import absolute_import
@@ -40,7 +40,7 @@ from dice_rl.environments.env_policies import get_target_policy
 import dice_rl.environments.gridworld.navigation as navigation
 import dice_rl.environments.gridworld.tree as tree
 import dice_rl.environments.gridworld.taxi as taxi
-from dice_rl.google.estimators.neural_bayes_dice import NeuralBayesDice
+from dice_rl.estimators.neural_bayes_dice import NeuralBayesDice
 from dice_rl.estimators import estimator as estimator_lib
 from dice_rl.networks.value_network import ValueNetwork
 import dice_rl.utils.common as common_utils
@@ -48,7 +48,7 @@ from dice_rl.data.dataset import Dataset, EnvStep, StepType
 from dice_rl.data.tf_offpolicy_dataset import TFOffpolicyDataset
 
 # BEGIN GOOGLE-INTERNAL
-import google3.learning.deepmind.xmanager2.client.google as xm
+import google3.learning.deepmind.xmanager2.client.google as xm  # pylint: disable=unused-import
 # END GOOGLE-INTERNAL
 
 FLAGS = flags.FLAGS
@@ -74,7 +74,7 @@ flags.DEFINE_integer('num_steps', 100000, 'Number of training steps.')
 flags.DEFINE_integer('batch_size', 2048, 'Batch size.')
 
 flags.DEFINE_float('f_exponent', 2., 'Exponent for f function.')
-flags.DEFINE_bool('primal_form', False,
+flags.DEFINE_bool('primal_form', True,
                   'Whether to use primal form of loss for nu.')
 
 flags.DEFINE_float('primal_regularizer', 0.,

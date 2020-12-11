@@ -11,11 +11,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Runs tabular BayesDICE.
+"""Script for running tabular BayesDICE.
 
-For example,
-blaze run -c opt --copt=-mavx2 google/scripts:run_tabular_bayes_dice --
---save_dir=$HOME/tmp --load_dir=/cns/is-d/home/sherryy/prodice/selection/data3
+Make sure to generate the datasets prior to running this script (see
+`scripts/create_dataset.py`). The default parameters here should reproduce
+the published bandit and frozenlake results. For Taxi, pass in
+solve_for_state_action_ratio=False.
 """
 
 from __future__ import absolute_import
@@ -39,13 +40,13 @@ from dice_rl.environments.env_policies import get_target_policy
 import dice_rl.environments.gridworld.navigation as navigation
 import dice_rl.environments.gridworld.taxi as taxi
 from dice_rl.estimators import estimator as estimator_lib
-from dice_rl.google.estimators.tabular_bayes_dice import TabularBayesDice
+from dice_rl.estimators.tabular_bayes_dice import TabularBayesDice
 import dice_rl.utils.common as common_utils
 from dice_rl.data.dataset import Dataset, EnvStep, StepType
 from dice_rl.data.tf_offpolicy_dataset import TFOffpolicyDataset
 
 # BEGIN GOOGLE-INTERNAL
-import google3.learning.deepmind.xmanager2.client.google as xm
+import google3.learning.deepmind.xmanager2.client.google as xm  # pylint: disable=unused-import
 # END GOOGLE-INTERNAL
 
 FLAGS = flags.FLAGS
