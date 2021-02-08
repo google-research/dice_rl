@@ -27,11 +27,11 @@ To run taxi, download the pretrained policies and place them under policies/taxi
 ## Run DICE Algorithms
 First, create datasets using the policy trained above:
 
-    for alpha in {0.0,1.0}; do python3 scripts/create_dataset.py --save_dir=$HOME/tmp/ --load_dir=$HOME/tmp/CartPole-v0 --env_name=cartpole--num_trajectory=400 --max_trajectory_length=250 --alpha=$alpha --tabular_obs=0; done
+    for alpha in {0.0,1.0}; do python3 scripts/create_dataset.py --save_dir=./tests/testdata --load_dir=./tests/testdata/CartPole-v0 --env_name=cartpole --num_trajectory=400 --max_trajectory_length=250 --alpha=$alpha --tabular_obs=0; done
 
 Run DICE estimator:
 
-    python3 scripts/run_neural_dice.py --save_dir=$HOME/tmp/ --load_dir=$HOME/tmp/ --env_name=cartpole --num_trajectory=400 --max_trajectory_length=250 --alpha=0.0 --tabular_obs=0
+    python3 scripts/run_neural_dice.py --save_dir=./tests/testdata --load_dir=./tests/testdata --env_name=cartpole --num_trajectory=400 --max_trajectory_length=250 --alpha=0.0 --tabular_obs=0
 
 To recover DualDICE, append the following to the above python command:
 
