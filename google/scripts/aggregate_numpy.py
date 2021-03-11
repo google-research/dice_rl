@@ -18,8 +18,8 @@ from __future__ import print_function
 
 import random
 
-from pyglib import app
-from pyglib import flags
+from absl import app
+from absl import flags
 
 from pyglib.contrib.g3_multiprocessing import g3_multiprocessing
 from concurrent import futures
