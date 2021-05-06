@@ -158,6 +158,8 @@ class NeuralDice(object):
 
       flat_actions = tf.reshape(actions, [batch_size * num_actions] +
                                 actions.shape[2:].as_list())
+
+      # code is failing here in line 163
       flat_observations = tf.reshape(
           tf.tile(env_step.observation[:, None, ...],
                   [1, num_actions] + [1] * len(env_step.observation.shape[1:])),
@@ -239,8 +241,11 @@ class NeuralDice(object):
     Returns:
       The losses and the train op.
     """
+    print("IN TRAIN_STEP FUNCTION")
     env_step = tf.nest.map_structure(lambda t: t[:, 0, ...], experience)
     next_env_step = tf.nest.map_structure(lambda t: t[:, 1, ...], experience)
+
+    print("PASSED THIS PART")
 
     with tf.GradientTape(
         watch_accessed_variables=False, persistent=True) as tape:
