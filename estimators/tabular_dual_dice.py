@@ -38,7 +38,7 @@ class TabularDualDice(object):
 
   def __init__(self, dataset_spec,
                gamma: Union[float, tf.Tensor],
-               reward_fn: Callable = None,
+               reward_fn: Optional[Callable] = None,
                solve_for_state_action_ratio: bool = False):
     """Initializes the solver.
 

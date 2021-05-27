@@ -41,7 +41,7 @@ class ImportanceSamplingCI(object):
                ci_method,
                delta_tail,
                gamma: Union[float, tf.Tensor],
-               reward_fn: Callable = None,
+               reward_fn: Optional[Callable] = None,
                clipping: Optional[float] = 2000.,
                policy_regularizer: float = 0.,
                q_network=None,

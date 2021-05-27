@@ -38,7 +38,7 @@ class TabularRobustDice(object):
       alpha_optimizer,
       gamma: Union[float, tf.Tensor],
       divergence_limit: Union[float, np.ndarray, tf.Tensor],
-      reward_fn: Callable = None,
+      reward_fn: Optional[Callable] = None,
       solve_for_state_action_ratio: bool = True,
       divergence_type: Text = 'rkl',  #'chi2',
       algae_alpha: Union[float, tf.Tensor] = 1.0,

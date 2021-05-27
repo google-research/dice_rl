@@ -54,8 +54,8 @@ def get_minibatch_average(dataset: Dataset,
                           num_batches: int = 1,
                           by_steps: bool = True,
                           truncate_episode_at: Optional[int] = None,
-                          reward_fn: Callable = None,
-                          weight_fn: Callable = None,
+                          reward_fn: Optional[Callable] = None,
+                          weight_fn: Optional[Callable] = None,
                           gamma: Union[float, tf.Tensor] = 1.0) -> Union[
                                   float, tf.Tensor]:
   """Computes average reward via randomly sampled mini-batches.
@@ -121,8 +121,8 @@ def get_fullbatch_average(dataset: OffpolicyDataset,
                           limit: Optional[int] = None,
                           by_steps: bool = True,
                           truncate_episode_at: Optional[int] = None,
-                          reward_fn: Callable = None,
-                          weight_fn: Callable = None,
+                          reward_fn: Optional[Callable] = None,
+                          weight_fn: Optional[Callable] = None,
                           gamma: Union[float, tf.Tensor] = 1.0) -> Union[
                                   float, tf.Tensor]:
   """Computes average reward over full dataset.

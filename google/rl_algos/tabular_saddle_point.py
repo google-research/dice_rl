@@ -37,7 +37,7 @@ class TabularSaddlePoint(object):
                z_learning_rate=0.5,
                v_learning_rate=0.5,
                entropy_reg=0.1,
-               reward_fn: Callable = None):
+               reward_fn: Optional[Callable] = None):
     """Initializes the solver.
 
     Args:

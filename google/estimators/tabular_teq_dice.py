@@ -39,8 +39,8 @@ class TabularTeQDice(object):
                dataset_spec,
                gamma: Union[float, tf.Tensor],
                max_trajectory_length: int,
-               step_encoding: str = None,
-               reward_fn: Callable = None,
+               step_encoding: Optional[str] = None,
+               reward_fn: Optional[Callable] = None,
                solve_for_state_action_ratio: bool = True):
     """Initializes the solver.
 

@@ -37,7 +37,7 @@ class NeuralDualDice(object):
                nu_optimizer,
                zeta_optimizer,
                gamma: Union[float, tf.Tensor],
-               reward_fn: Callable = None,
+               reward_fn: Optional[Callable] = None,
                solve_for_state_action_ratio: bool = True,
                f_exponent: float = 1.5,
                primal_form: bool = False,

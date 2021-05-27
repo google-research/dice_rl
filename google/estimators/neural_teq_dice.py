@@ -34,7 +34,7 @@ class NeuralTeQDice(NeuralDualDice):
                nu_optimizer,
                zeta_optimizer,
                gamma: Union[float, tf.Tensor],
-               reward_fn: Callable = None,
+               reward_fn: Optional[Callable] = None,
                **kwargs):
     """Initializes the solver.
 

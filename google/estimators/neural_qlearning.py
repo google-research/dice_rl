@@ -40,7 +40,7 @@ class NeuralQLearning(object):
                value_network,
                optimizer,
                gamma: Union[float, tf.Tensor],
-               reward_fn: Callable = None,
+               reward_fn: Optional[Callable] = None,
                solve_for_state_action_value: bool = True,
                num_qvalues: Optional[int] = None,
                target_update_tau: Union[float, tf.Tensor] = 0.02,

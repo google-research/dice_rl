@@ -37,7 +37,7 @@ class TabularQLearning(object):
   def __init__(self,
                dataset_spec,
                gamma: Union[float, tf.Tensor],
-               reward_fn: Callable = None,
+               reward_fn: Optional[Callable] = None,
                solve_for_state_action_value: bool = True,
                num_qvalues: Optional[int] = None,
                bootstrap: bool = True,
