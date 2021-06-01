@@ -14,6 +14,7 @@
 
 import functools
 import os
+import logging
 from typing import Callable, Iterable, Optional, Sequence, Tuple, Union, Mapping
 
 import numpy as np
@@ -31,7 +32,6 @@ from tf_agents.policies import tf_policy
 from tf_agents.trajectories import policy_step
 from tf_agents.utils import nest_utils
 import tensorflow_probability as tfp
-import os
 
 from dice_rl.environments import suites
 from dice_rl.environments.infinite_cartpole import InfiniteCartPole
@@ -40,6 +40,7 @@ from dice_rl.environments.infinite_reacher import InfiniteReacher
 from dice_rl.environments.gridworld import navigation
 from dice_rl.environments.gridworld import taxi
 from dice_rl.environments.gridworld import tree
+from dice_rl.environments.gridworld import low_rank
 from dice_rl.environments import bandit
 import dice_rl.utils.common as common_lib
 
@@ -125,8 +126,32 @@ def get_env_and_policy(load_dir,
         policy_fn,
         policy_info_spec,
         emit_log_probability=True)
+  elif env_name == 'low_rank':
+    env = low_rank.LowRank()
+    env.seed(env_seed)
+    policy_fn, policy_info_spec = low_rank.get_low_rank_policy(
+        env, epsilon_explore=0.1 + 0.8 * (1 - alpha), py=False)
+    tf_env = tf_py_environment.TFPyEnvironment(gym_wrapper.GymWrapper(env))
+    policy = common_lib.TFAgentsWrappedPolicy(
+        tf_env.time_step_spec(),
+        tf_env.action_spec(),
+        policy_fn,
+        policy_info_spec,
+        emit_log_probability=True)
   elif env_name == 'tree':
     env = tree.Tree(branching=2, depth=10)
+    env.seed(env_seed)
+    policy_fn, policy_info_spec = tree.get_tree_policy(
+        env, epsilon_explore=0.1 + 0.8 * (1 - alpha), py=False)
+    tf_env = tf_py_environment.TFPyEnvironment(gym_wrapper.GymWrapper(env))
+    policy = common_lib.TFAgentsWrappedPolicy(
+        tf_env.time_step_spec(),
+        tf_env.action_spec(),
+        policy_fn,
+        policy_info_spec,
+        emit_log_probability=True)
+  elif env_name == 'lowrank_tree':
+    env = tree.Tree(branching=2, depth=3, duplicate=10)
     env.seed(env_seed)
     policy_fn, policy_info_spec = tree.get_tree_policy(
         env, epsilon_explore=0.1 + 0.8 * (1 - alpha), py=False)
