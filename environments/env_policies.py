@@ -38,10 +38,13 @@ from dice_rl.environments.infinite_cartpole import InfiniteCartPole
 from dice_rl.environments.infinite_frozenlake import InfiniteFrozenLake
 from dice_rl.environments.infinite_reacher import InfiniteReacher
 from dice_rl.environments.gridworld import navigation
+from dice_rl.environments.gridworld import point_maze
 from dice_rl.environments.gridworld import taxi
 from dice_rl.environments.gridworld import tree
 from dice_rl.environments.gridworld import low_rank
 from dice_rl.environments import bandit
+from dice_rl.environments import line
+from dice_rl.environments import contextual_bandit
 import dice_rl.utils.common as common_lib
 
 
@@ -126,6 +129,30 @@ def get_env_and_policy(load_dir,
         policy_fn,
         policy_info_spec,
         emit_log_probability=True)
+  elif env_name == 'four_rooms':
+    env = navigation.FourRooms(tabular_obs=tabular_obs)
+    env.seed(env_seed)
+    policy_fn, policy_info_spec = navigation.get_navigation_policy(
+        env, epsilon_explore=0.1 + 0.6 * (1 - alpha), py=False)
+    tf_env = tf_py_environment.TFPyEnvironment(gym_wrapper.GymWrapper(env))
+    policy = common_lib.TFAgentsWrappedPolicy(
+        tf_env.time_step_spec(),
+        tf_env.action_spec(),
+        policy_fn,
+        policy_info_spec,
+        emit_log_probability=True)
+  elif env_name == 'point_maze':
+    env = point_maze.PointMaze(tabular_obs=tabular_obs)
+    env.seed(env_seed)
+    policy_fn, policy_info_spec = point_maze.get_navigation_policy(
+        env, epsilon_explore=1. - alpha, py=False)
+    tf_env = tf_py_environment.TFPyEnvironment(gym_wrapper.GymWrapper(env))
+    policy = common_lib.TFAgentsWrappedPolicy(
+        tf_env.time_step_spec(),
+        tf_env.action_spec(),
+        policy_fn,
+        policy_info_spec,
+        emit_log_probability=True)
   elif env_name == 'low_rank':
     env = low_rank.LowRank()
     env.seed(env_seed)
@@ -167,6 +194,20 @@ def get_env_and_policy(load_dir,
     env = bandit.Bandit(num_arms=num_arms)
     env.seed(env_seed)
     policy_fn, policy_info_spec = bandit.get_bandit_policy(
+        env, epsilon_explore=1 - alpha, py=False)
+    tf_env = tf_py_environment.TFPyEnvironment(gym_wrapper.GymWrapper(env))
+    policy = common_lib.TFAgentsWrappedPolicy(
+        tf_env.time_step_spec(),
+        tf_env.action_spec(),
+        policy_fn,
+        policy_info_spec,
+        emit_log_probability=True)
+  elif env_name.startswith('contextual_bandit'):
+    num_arms = int(env_name[17:]) if len(env_name) > 17 else 2
+    env = contextual_bandit.ContextualBandit(
+        num_arms=num_arms, num_rewards=num_arms // 2)
+    env.seed(env_seed)
+    policy_fn, policy_info_spec = contextual_bandit.get_contextual_bandit_policy(
         env, epsilon_explore=1 - alpha, py=False)
     tf_env = tf_py_environment.TFPyEnvironment(gym_wrapper.GymWrapper(env))
     policy = common_lib.TFAgentsWrappedPolicy(
@@ -238,6 +279,8 @@ def get_env_and_policy(load_dir,
     policy = load_policy(sac_policy, env_name, directory)
     policy = GaussianPolicy(
         policy, 0.2 - 0.1 * alpha, emit_log_probability=True)
+  elif env_name == 'line':
+    tf_env, policy = line.get_line_env_and_policy(env_seed)
   else:
     raise ValueError('Unrecognized environment %s.' % env_name)
 
