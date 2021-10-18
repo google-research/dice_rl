@@ -77,7 +77,7 @@ class PerturbedDataset(OffpolicyDataset):
   @property
   def constructor_args_and_kwargs(self):
     args = [self._dataset]
-    kwargs = {'num_perturbations': self._num_perturbation,
+    kwargs = {'num_perturbations': self._num_perturbation,  # pytype: disable=attribute-error  # bind-properties
               'perturbation_scale': self._perturbation_scale}
     return args, kwargs
 
