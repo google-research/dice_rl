@@ -242,16 +242,16 @@ def get_env_and_policy(load_dir,
         epsilon=0.3 + 0.15 * (1 - alpha))
     env = InfiniteCartPole()
     tf_env = tf_py_environment.TFPyEnvironment(gym_wrapper.GymWrapper(env))
-  elif env_name == 'FrozenLake-v0':
+  elif env_name == 'FrozenLake-v1':
     tf_env, policy = get_env_and_dqn_policy(
-        'FrozenLake-v0',
+        'FrozenLake-v1',
         os.path.join(load_dir, 'FrozenLake-v0', 'train', 'policy'),
         env_seed=env_seed,
         epsilon=0.2 * (1 - alpha),
         ckpt_file='ckpt-100000')
   elif env_name == 'frozenlake':  # Infinite-horizon frozenlake.
     tf_env, policy = get_env_and_dqn_policy(
-        'FrozenLake-v0',
+        'FrozenLake-v1',
         os.path.join(load_dir, 'FrozenLake-v0', 'train', 'policy'),
         env_seed=env_seed,
         epsilon=0.2 * (1 - alpha),

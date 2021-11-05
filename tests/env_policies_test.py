@@ -39,7 +39,7 @@ class EnvPoliciesTest(tf.test.TestCase):
     load_dir = os.path.join(flags.FLAGS.test_srcdir, load_dir)
     env_names = [
         'grid', 'tree', 'bandit', 'small_tree', 'reacher', 'Reacher-v2',
-        'cartpole', 'CartPole-v0', 'frozenlake', 'FrozenLake-v0',
+        'cartpole', 'CartPole-v0', 'frozenlake', 'FrozenLake-v1',
         'HalfCheetah-v2'
     ]
     for env_name in env_names:
