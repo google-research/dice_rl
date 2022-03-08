@@ -27,6 +27,7 @@ flags.DEFINE_string('exp_name', 'create dataset', 'Name of experiment.')
 flags.DEFINE_string('cell', None, 'The cell to run jobs in.')
 flags.DEFINE_integer('priority', 25, 'Priority to run job as.')
 
+flags.DEFINE_integer('start_seed', 0, 'Number of random seed.')
 flags.DEFINE_integer('num_seeds', 200, 'Number of random seed.')
 flags.DEFINE_string('env_name', 'grid', 'Environment name.')
 flags.DEFINE_string('load_dir',
@@ -49,7 +50,7 @@ def build_experiment():
       '//third_party/py/dice_rl/scripts:create_dataset',
       build_flags=['-c', 'opt', '--copt=-mavx'],
       args=[
-          ('env_name', FLAGS.env_name),
+          #('env_name', FLAGS.env_name),
           ('load_dir', FLAGS.load_dir),
           ('save_dir', FLAGS.save_dir),
           ('tabular_obs', FLAGS.tabular_obs),
@@ -59,18 +60,16 @@ def build_experiment():
       runtime=runtime_worker)
 
   parameters = hyper.product([
-      hyper.sweep('alpha', hyper.discrete([0.0, 1.0])),
-      hyper.sweep('seed', hyper.discrete(list(range(FLAGS.num_seeds)))),
-      hyper.sweep('num_trajectory', hyper.discrete([100])),
+      hyper.sweep('env_name',
+                  ['maze:8-tunnel', 'maze:16-tunnel', 'maze:32-tunnel']),
+      hyper.sweep('alpha', hyper.discrete([1.0])),
       hyper.sweep(
-          'max_trajectory_length',
-          hyper.discrete([
-              100,
-              #5,
-              #10,
-              #20,
-              #40,  #50, 100, 200
-          ])),
+          'seed',
+          hyper.discrete(
+              list(range(FLAGS.start_seed,
+                         FLAGS.start_seed + FLAGS.num_seeds)))),
+      hyper.sweep('num_trajectory', hyper.discrete([4, 16, 64, 256])),
+      hyper.sweep('max_trajectory_length', hyper.discrete([100])),
   ])
   experiment = xm.ParameterSweep(executable, parameters)
   return experiment

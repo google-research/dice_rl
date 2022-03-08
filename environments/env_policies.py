@@ -38,6 +38,7 @@ from dice_rl.environments.infinite_cartpole import InfiniteCartPole
 from dice_rl.environments.infinite_frozenlake import InfiniteFrozenLake
 from dice_rl.environments.infinite_reacher import InfiniteReacher
 from dice_rl.environments.gridworld import navigation
+from dice_rl.environments.gridworld import maze
 from dice_rl.environments.gridworld import point_maze
 from dice_rl.environments.gridworld import taxi
 from dice_rl.environments.gridworld import tree
@@ -134,6 +135,21 @@ def get_env_and_policy(load_dir,
     env.seed(env_seed)
     policy_fn, policy_info_spec = navigation.get_navigation_policy(
         env, epsilon_explore=0.1 + 0.6 * (1 - alpha), py=False)
+    tf_env = tf_py_environment.TFPyEnvironment(gym_wrapper.GymWrapper(env))
+    policy = common_lib.TFAgentsWrappedPolicy(
+        tf_env.time_step_spec(),
+        tf_env.action_spec(),
+        policy_fn,
+        policy_info_spec,
+        emit_log_probability=True)
+  elif 'maze:' in env_name:
+    # Format is in maze:<size>-<type>
+    name, wall_type = env_name.split('-')
+    size = int(name.split(':')[-1])
+    env = maze.Maze(size, wall_type, maze_seed=env_seed)
+    env.seed(env_seed)
+    policy_fn, policy_info_spec = navigation.get_navigation_policy(
+        env, epsilon_explore=1 - alpha, py=False)
     tf_env = tf_py_environment.TFPyEnvironment(gym_wrapper.GymWrapper(env))
     policy = common_lib.TFAgentsWrappedPolicy(
         tf_env.time_step_spec(),
