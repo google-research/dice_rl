@@ -1,4 +1,3 @@
-# python3
 """Load a pytorch policy from weights in a pkl file."""
 
 import pickle
