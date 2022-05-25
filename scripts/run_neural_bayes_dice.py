@@ -197,7 +197,6 @@ def main(argv):
         estimator_lib.get_fullbatch_average(dataset, gamma=gamma))
 
   activation_fn = tf.nn.relu
-  kernel_initializer = tf.keras.initializers.GlorotUniform()
   hidden_dims = (64, 64)
   input_spec = (dataset.spec.observation, dataset.spec.action)
   nu_network = ValueNetwork(
@@ -205,8 +204,8 @@ def main(argv):
       output_dim=2,
       fc_layer_params=hidden_dims,
       activation_fn=activation_fn,
-      kernel_initializer=kernel_initializer,
-      last_kernel_initializer=kernel_initializer)
+      kernel_initializer=tf.keras.initializers.GlorotUniform(),
+      last_kernel_initializer=tf.keras.initializers.GlorotUniform())
   output_activation_fn = tf.math.square if zeta_pos else tf.identity
   zeta_network = ValueNetwork(
       input_spec,
@@ -214,8 +213,8 @@ def main(argv):
       fc_layer_params=hidden_dims,
       activation_fn=activation_fn,
       output_activation_fn=output_activation_fn,
-      kernel_initializer=kernel_initializer,
-      last_kernel_initializer=kernel_initializer)
+      kernel_initializer=tf.keras.initializers.GlorotUniform(),
+      last_kernel_initializer=tf.keras.initializers.GlorotUniform())
 
   nu_optimizer = tf.keras.optimizers.Adam(nu_learning_rate)
   zeta_optimizer = tf.keras.optimizers.Adam(zeta_learning_rate)
