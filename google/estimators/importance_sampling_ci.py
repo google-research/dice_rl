@@ -468,7 +468,7 @@ class ImportanceSamplingCI(object):
 
       lb, ub = _compute_bootstrap_lb_ub(is_weighted_reward_samples)
     else:
-      ValueError('Confidence interval is not implemented!')
+      raise ValueError('Confidence interval is not implemented!')
     return [lb, ub]
 
   @tf.function
