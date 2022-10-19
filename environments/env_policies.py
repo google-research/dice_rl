@@ -44,6 +44,7 @@ from dice_rl.environments.gridworld import taxi
 from dice_rl.environments.gridworld import tree
 from dice_rl.environments.gridworld import low_rank
 from dice_rl.environments import bandit
+from dice_rl.environments import bernoulli_bandit
 from dice_rl.environments import line
 from dice_rl.environments import contextual_bandit
 import dice_rl.utils.common as common_lib
@@ -198,6 +199,18 @@ def get_env_and_policy(load_dir,
     env.seed(env_seed)
     policy_fn, policy_info_spec = tree.get_tree_policy(
         env, epsilon_explore=0.1 + 0.8 * (1 - alpha), py=False)
+    tf_env = tf_py_environment.TFPyEnvironment(gym_wrapper.GymWrapper(env))
+    policy = common_lib.TFAgentsWrappedPolicy(
+        tf_env.time_step_spec(),
+        tf_env.action_spec(),
+        policy_fn,
+        policy_info_spec,
+        emit_log_probability=True)
+  elif env_name == 'bernoulli_bandit':
+    env = bernoulli_bandit.BernoulliBandit(num_arms=2)
+    env.seed(env_seed)
+    policy_fn, policy_info_spec = bernoulli_bandit.get_bandit_policy(
+        env, epsilon_explore=1 - alpha, bernoulli_prob=alpha, py=False)
     tf_env = tf_py_environment.TFPyEnvironment(gym_wrapper.GymWrapper(env))
     policy = common_lib.TFAgentsWrappedPolicy(
         tf_env.time_step_spec(),
