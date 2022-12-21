@@ -61,9 +61,9 @@ def create_py_policy_from_table(probability_table, obs_to_index_fn):
     policy_info = {'log_probability': log_prob, 'distribution': distributions}
     return action.astype(dtype), policy_info
 
-  policy_info_spec = {'log_probability': specs.ArraySpec([], np.float),
+  policy_info_spec = {'log_probability': specs.ArraySpec([], float),
                       'distribution': specs.BoundedArraySpec(
-                          [np.shape(probability_table)[-1]], np.float,
+                          [np.shape(probability_table)[-1]], float,
                           minimum=0.0, maximum=1.0)}
   return policy_fn, policy_info_spec
 
