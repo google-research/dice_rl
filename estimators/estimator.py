@@ -84,12 +84,12 @@ def get_minibatch_average(dataset: Dataset,
     if by_steps:
       reward_fn = _default_by_steps_reward_fn
     else:
-      reward_fn = lambda *args: _default_by_episodes_reward_fn(
+      reward_fn = lambda *args: _default_by_episodes_reward_fn(  # pytype: disable=missing-parameter  # always-use-return-annotations
           *args, gamma=gamma)
 
   if weight_fn is None:
     if by_steps:
-      weight_fn = lambda *args: _default_by_steps_weight_fn(*args, gamma=gamma)
+      weight_fn = lambda *args: _default_by_steps_weight_fn(*args, gamma=gamma)  # pytype: disable=duplicate-keyword-argument  # always-use-return-annotations
     else:
       weight_fn = _default_by_episodes_weight_fn
 
@@ -149,12 +149,12 @@ def get_fullbatch_average(dataset: OffpolicyDataset,
     if by_steps:
       reward_fn = _default_by_steps_reward_fn
     else:
-      reward_fn = lambda *args: _default_by_episodes_reward_fn(
+      reward_fn = lambda *args: _default_by_episodes_reward_fn(  # pytype: disable=missing-parameter  # always-use-return-annotations
           *args, gamma=gamma)
 
   if weight_fn is None:
     if by_steps:
-      weight_fn = lambda *args: _default_by_steps_weight_fn(*args, gamma=gamma)
+      weight_fn = lambda *args: _default_by_steps_weight_fn(*args, gamma=gamma)  # pytype: disable=duplicate-keyword-argument  # always-use-return-annotations
     else:
       weight_fn = _default_by_episodes_weight_fn
 
