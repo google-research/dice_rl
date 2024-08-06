@@ -3,6 +3,7 @@ from __future__ import division
 from __future__ import print_function
 
 import collections
+import math
 import gym
 import itertools
 import numpy as np
@@ -24,7 +25,7 @@ class ContextualBandit(gym.Env):
     self._num_arms = num_arms
     self._num_rewards = num_rewards or self._num_arms
     assert (self._num_rewards <= self._num_arms)
-    self._num_contexts = np.math.factorial(self._num_arms)
+    self._num_contexts = math.factorial(self._num_arms)
     self._loop = loop
     self._generate_bandit(generation_seed)
 
