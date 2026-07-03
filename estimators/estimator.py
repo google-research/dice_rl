@@ -102,11 +102,11 @@ def get_minibatch_average(dataset: Dataset,
       else:
         steps = dataset.get_step(batch_size)
       rewards = reward_fn(steps)
-      weights = weight_fn(steps)
+      weights = weight_fn(steps)  # pyrefly: ignore[missing-argument]
     else:
       episodes, valid_steps = dataset.get_episode(
           batch_size, truncate_episode_at=truncate_episode_at)
-      rewards = reward_fn(episodes, valid_steps)
+      rewards = reward_fn(episodes, valid_steps)  # pyrefly: ignore[bad-argument-count]
       weights = weight_fn(episodes, valid_steps)
 
     rewards = common_lib.reverse_broadcast(rewards, weights)
@@ -161,11 +161,11 @@ def get_fullbatch_average(dataset: OffpolicyDataset,
   if by_steps:
     steps = dataset.get_all_steps(limit=limit)
     rewards = reward_fn(steps)
-    weights = weight_fn(steps)
+    weights = weight_fn(steps)  # pyrefly: ignore[missing-argument]
   else:
     episodes, valid_steps = dataset.get_all_episodes(
         truncate_episode_at=truncate_episode_at, limit=limit)
-    rewards = reward_fn(episodes, valid_steps)
+    rewards = reward_fn(episodes, valid_steps)  # pyrefly: ignore[bad-argument-count]
     weights = weight_fn(episodes, valid_steps)
 
   rewards = common_lib.reverse_broadcast(rewards, weights)

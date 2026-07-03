@@ -112,7 +112,7 @@ class ImportanceSamplingCI(object):
 
     def update():
       return tfagents_common.soft_variables_update(
-          self._q_network.variables,
+          self._q_network.variables,  # pyrefly: ignore[missing-attribute]
           self._target_network.variables,
           tau,
           tau_non_trainable=1.0)
@@ -121,7 +121,7 @@ class ImportanceSamplingCI(object):
 
   def _initialize(self):
     tfagents_common.soft_variables_update(
-        self._q_network.variables, self._target_network.variables, tau=1.0)
+        self._q_network.variables, self._target_network.variables, tau=1.0)  # pyrefly: ignore[missing-attribute]
 
   def _orthogonal_regularization(self, network):
     reg = 0
@@ -161,7 +161,7 @@ class ImportanceSamplingCI(object):
       num_actions = self._num_samples
       action_weights = tf.ones([batch_size, num_actions]) / num_actions
       actions = tf.stack(
-          [policy.action(tfagents_step).action for _ in range(num_actions)],
+          [policy.action(tfagents_step).action for _ in range(num_actions)],  # pyrefly: ignore[bad-argument-type]
           axis=1)
 
     flat_actions = tf.reshape(
@@ -188,7 +188,7 @@ class ImportanceSamplingCI(object):
         env_step.action[..., tf.newaxis])
 
   def clip_is_factor(self, is_factor):
-    return tf.minimum(self._clipping, tf.maximum(-self._clipping, is_factor))
+    return tf.minimum(self._clipping, tf.maximum(-self._clipping, is_factor))  # pyrefly: ignore[unsupported-operation]
 
   def clip_log_factor(self, log_factor):
     return tf.minimum(tf.math.log(self._clipping),
@@ -241,12 +241,12 @@ class ImportanceSamplingCI(object):
         baseline_policy_log_probability = tf.reduce_sum(
             baseline_policy_log_probability, -1)
       policy_log_ratios = tf.reshape(
-          tf.maximum(-1.0 / eps, target_log_probabilities -
+          tf.maximum(-1.0 / eps, target_log_probabilities -  # pyrefly: ignore[unsupported-operation]
                      baseline_policy_log_probability),
           [num_episodes, total_num_steps_per_episode])
     else:
       policy_log_ratios = tf.reshape(
-          tf.maximum(-1.0 / eps,
+          tf.maximum(-1.0 / eps,  # pyrefly: ignore[unsupported-operation]
                      target_log_probabilities - env_step.get_log_probability()),
           [num_episodes, total_num_steps_per_episode])
     valid_steps_in = valid_steps[:, 0:total_num_steps_per_episode]
@@ -424,7 +424,7 @@ class ImportanceSamplingCI(object):
             tf.reduce_sum(
                 tf.cast(
                     tf.greater(sample_mean, sorted_subsample_means),
-                    tf.float32)) / float(num_bootstraps))
+                    tf.float32)) / float(num_bootstraps))  # pyrefly: ignore[bad-argument-type]
         # y is the leave-one-out, jackknife sample mean
         mask_matrix = tf.ones([num_episodes, num_episodes
                               ]) - tf.eye(num_episodes)
@@ -454,12 +454,12 @@ class ImportanceSamplingCI(object):
             tf.maximum(
                 tf.minimum(
                     tf.floor(num_bootstraps * gaussian_rv.cdf(z_lb)),
-                    num_bootstraps - 1), 1), tf.int64)
+                    num_bootstraps - 1), 1), tf.int64)  # pyrefly: ignore[unsupported-operation]
         ub_index = tf.cast(
             tf.maximum(
                 tf.minimum(
                     tf.floor(num_bootstraps * gaussian_rv.cdf(z_ub)),
-                    num_bootstraps - 1), 1), tf.int64)
+                    num_bootstraps - 1), 1), tf.int64)  # pyrefly: ignore[unsupported-operation]
 
         lb = tf.gather(sorted_subsample_means, lb_index)
         ub = tf.gather(sorted_subsample_means, ub_index)

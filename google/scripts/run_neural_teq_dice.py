@@ -174,8 +174,8 @@ def main(argv):
   nu_network.create_variables()
   zeta_network.create_variables()
   try:
-    nu_network.load_weights(os.path.join(network_dir, hparam_net, 'nu'))
-    zeta_network.load_weights(os.path.join(network_dir, hparam_net, 'zeta'))
+    nu_network.load_weights(os.path.join(network_dir, hparam_net, 'nu'))  # pyrefly: ignore[no-matching-overload]
+    zeta_network.load_weights(os.path.join(network_dir, hparam_net, 'zeta'))  # pyrefly: ignore[no-matching-overload]
     print('loaded networks from', network_dir)
   except:
     print('initialized network from scratch')

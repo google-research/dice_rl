@@ -132,7 +132,7 @@ class NeuralDualDice(object):
         action_weights = tf.ones([batch_size, num_actions]) / num_actions
         actions = tf.stack(
             [policy.action(tfagents_step).action
-             for _ in range(num_actions)],
+             for _ in range(num_actions)],  # pyrefly: ignore[bad-argument-type]
             axis=1)
 
       flat_actions = tf.reshape(actions, [batch_size * num_actions] +

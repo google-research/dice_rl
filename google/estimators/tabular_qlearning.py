@@ -119,7 +119,7 @@ class TabularQLearning(object):
     Returns:
       Estimated average per-step reward of the target policy.
     """
-    num_estimates = 1 + int(self._num_qvalues)
+    num_estimates = 1 + int(self._num_qvalues)  # pyrefly: ignore[bad-argument-type]
     transition_matrix = np.zeros(
         [self._dimension, self._dimension, num_estimates])
     reward_vector = np.zeros(

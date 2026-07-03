@@ -17,7 +17,7 @@ from __future__ import division
 from __future__ import print_function
 
 import numpy as np
-np.set_printoptions(threshold=np.inf)
+np.set_printoptions(threshold=np.inf)  # pyrefly: ignore[bad-argument-type]
 import tensorflow.compat.v2 as tf
 from tf_agents.specs import tensor_spec
 from tf_agents.policies import tf_policy
@@ -178,7 +178,7 @@ class TabularRobustDice(object):
         num_actions = self._num_samples
         action_weights = tf.ones([batch_size, num_actions]) / num_actions
         actions = tf.stack(
-            [policy.action(tfagents_step).action for _ in range(num_actions)],
+            [policy.action(tfagents_step).action for _ in range(num_actions)],  # pyrefly: ignore[bad-argument-type]
             axis=1)
       flat_actions = tf.reshape(actions, [batch_size * num_actions] +
                                 actions.shape[2:].as_list())

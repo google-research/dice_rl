@@ -249,7 +249,7 @@ def main(argv):
                                        target_policy)
     return losses
 
-  with summary_writer.as_default():
+  with summary_writer.as_default():  # pyrefly: ignore[unbound-name]
     running_losses = []
     running_estimates = []
     for step in range(num_steps):
