@@ -151,9 +151,9 @@ class TabularQLearning(object):
       this_episode = tf.nest.map_structure(lambda t: t[episode_num], episodes)
       this_tfagents_episode = dataset_lib.convert_to_tfagents_timestep(
           this_episode)
-      episode_target_log_probabilities = target_policy.distribution(
+      episode_target_log_probabilities = target_policy.distribution(  # pyrefly: ignore[missing-attribute]
           this_tfagents_episode).action.log_prob(this_episode.action)
-      episode_target_probs = target_policy.distribution(
+      episode_target_probs = target_policy.distribution(  # pyrefly: ignore[missing-attribute]
           this_tfagents_episode).action.probs_parameter()
 
       for step_num in range(tf.shape(valid_steps)[1] - 1):
@@ -244,7 +244,7 @@ class TabularQLearning(object):
 
         tfagents_first_step = dataset_lib.convert_to_tfagents_timestep(
             first_step)
-        initial_target_probs = target_policy.distribution(
+        initial_target_probs = target_policy.distribution(  # pyrefly: ignore[missing-attribute]
             tfagents_first_step).action.probs_parameter()
         value = tf.reduce_sum(initial_qvalues * initial_target_probs, axis=-1)
       else:

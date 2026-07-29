@@ -293,9 +293,9 @@ class TabularRobustDice(object):
           next_env_step)
 
       # get probabilities
-      initial_target_probs = target_policy.distribution(
+      initial_target_probs = target_policy.distribution(  # pyrefly: ignore[missing-attribute]
           tfagents_initial_env_step).action.probs_parameter()
-      next_target_probs = target_policy.distribution(
+      next_target_probs = target_policy.distribution(  # pyrefly: ignore[missing-attribute]
           tfagents_next_env_step).action.probs_parameter()
 
       # First, get the nu_loss and data weights
@@ -353,7 +353,7 @@ class TabularRobustDice(object):
 
       nu_indices = self._get_index(env_step.observation, env_step.action)
 
-      target_log_probabilities = target_policy.distribution(
+      target_log_probabilities = target_policy.distribution(  # pyrefly: ignore[missing-attribute]
           tfagents_env_step).action.log_prob(env_step.action)
       if not self._solve_for_state_action_ratio:
         policy_ratio = tf.exp(target_log_probabilities -

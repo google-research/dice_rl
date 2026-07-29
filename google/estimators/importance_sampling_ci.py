@@ -230,7 +230,7 @@ class ImportanceSamplingCI(object):
     init_values = self._get_v_value(init_env_step, target_policy)
     init_offset = (1 - self._gamma) * init_values
 
-    target_log_probabilities = target_policy.distribution(
+    target_log_probabilities = target_policy.distribution(  # pyrefly: ignore[missing-attribute]
         tfagents_env_step).action.log_prob(env_step.action)
     if tf.rank(target_log_probabilities) > 1:
       target_log_probabilities = tf.reduce_sum(target_log_probabilities, -1)

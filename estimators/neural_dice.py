@@ -287,7 +287,7 @@ class NeuralDice(object):
       policy_ratio = 1.0
       if not self._solve_for_state_action_ratio:
         tfagents_timestep = dataset_lib.convert_to_tfagents_timestep(env_step)
-        target_log_probabilities = target_policy.distribution(
+        target_log_probabilities = target_policy.distribution(  # pyrefly: ignore[missing-attribute]
             tfagents_timestep).action.log_prob(env_step.action)
         policy_ratio = tf.exp(target_log_probabilities -
                               env_step.get_log_probability())
